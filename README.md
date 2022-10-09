@@ -1,6 +1,6 @@
 # PowerDNS NS
 
-Descriptors that installs a PowerDNS chart from "https://gatici.github.io/helm-repo/" repo.
+Descriptors that installs a PowerDNS chart from https://gatici.github.io/helm-repo/ repo.
 
 There is one VNF (powerdns_knf) with only one KDU.
 
@@ -10,7 +10,7 @@ There is one NS that connects the VNF to a mgmt network
 NS_NAME=powerdns_ns
 VNF_NAME=powerdns
 KDU_NAME=powerdns_kdu
-# Please define the vim_account
+Please define the vim_account
 VIM_ACCOUNT=<vim_account_name|vim_account_id>
 
 ```bash
