@@ -7,10 +7,15 @@ There is one VNF (powerdns_knf) with only one KDU.
 There is one NS that connects the VNF to a mgmt network
 
 ## Onboarding and instantiation
+
 NS_NAME=powerdns_ns
+
 VNF_NAME=powerdns
+
 KDU_NAME=powerdns_kdu
+
 Please define the vim_account
+
 VIM_ACCOUNT=<vim_account_name|vim_account_id>
 
 ```bash
