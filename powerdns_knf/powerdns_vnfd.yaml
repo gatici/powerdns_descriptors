@@ -1,0 +1,77 @@
+vnfd:
+  description: KNF with single KDU using a helm-chart for PowerDNS
+  df:
+  - id: default-df
+    lcm-operations-configuration:
+      operate-vnf-op-config:
+        day1-2:
+          - id: powerdns
+            execution-environment-list:
+            - id: powerdns-ee
+              juju:
+                charm: powerdns-proxy_ubuntu-20.04-amd64.charm
+                cloud: k8s
+            config-primitive:
+            - name: add-zone
+              execution-environment-ref: powerdns-ee
+              parameter:
+              - name: zone_name
+                data-type: STRING
+                default-value: ""
+              - name: service_name
+                data-type: STRING
+                default-value: ""
+            - name: delete-zone
+              execution-environment-ref: powerdns-ee
+              parameter:
+                - name: zone_name
+                  data-type: STRING
+                  default-value: ""
+                - name: service_name
+                  data-type: STRING
+                  default-value: ""
+            - name: add-domain
+              execution-environment-ref: powerdns-ee
+              parameter:
+                - name: zone_name
+                  data-type: STRING
+                  default-value: ""
+                - name: subdomain
+                  data-type: STRING
+                  default-value: ""
+                - name: ip
+                  data-type: STRING
+                  default-value: ""
+                - name: service_name
+                  data-type: STRING
+                  default-value: ""
+            - name: delete-domain
+              execution-environment-ref: powerdns-ee
+              parameter:
+                - name: zone_name
+                  data-type: STRING
+                  default-value: ""
+                - name: subdomain
+                  data-type: STRING
+                  default-value: ""
+                - name: service_name
+                  data-type: STRING
+                  default-value: ""
+
+  ext-cpd:
+  - id: mgmt-ext
+    k8s-cluster-net: mgmtnet
+  id: powerdns_knf
+  k8s-cluster:
+    nets:
+    - id: mgmtnet
+  kdu:
+  - name: powerdns_kdu
+    helm-chart: gatici-repo/powerdns
+    service:
+    - name: gatici-repo-powerdns
+  mgmt-cp: mgmt-ext
+  product-name: powerdns_knf
+  provider: Canonical Ltd.
+  version: 1.0
+

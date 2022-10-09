@@ -1,0 +1,22 @@
+nsd:
+  nsd:
+  - description: NS consisting of a single KNF powerdns_knf connected to mgmt network
+    designer: OSM
+    df:
+    - id: default-df
+      vnf-profile:
+      - id: powerdns
+        virtual-link-connectivity:
+        - constituent-cpd-id:
+          - constituent-base-element-id: powerdns
+            constituent-cpd-id: mgmt-ext
+          virtual-link-profile-id: mgmtnet
+        vnfd-id: powerdns_knf
+    id: powerdns_ns
+    name: powerdns_ns
+    version: '1.0'
+    virtual-link-desc:
+    - id: mgmtnet
+      mgmt-network: 'true'
+    vnfd-id:
+    - powerdns_knf

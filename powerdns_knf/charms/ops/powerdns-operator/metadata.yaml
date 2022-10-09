@@ -1,0 +1,12 @@
+# Copyright 2022 David Garcia
+# See LICENSE file for licensing details.
+
+# For a complete list of supported options, see:
+# https://juju.is/docs/sdk/metadata-reference
+name: powerdns-proxy
+display-name: Powerdns
+description: |
+  Proxy charm to perform add/delete zone and domain on PowerDNS Server.
+summary: |
+  Proxy charm to perform add/delete zone and domain on PowerDNS Server.
+

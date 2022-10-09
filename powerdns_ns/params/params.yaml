@@ -1,0 +1,16 @@
+vld:
+- name: mgmtnet
+  vim-network-name: osm-ext
+additionalParamsForVnf:
+- member-vnf-index: powerdns
+  additionalParamsForKdu:
+  - kdu_name: powerdns
+    additionalParams:
+      # replicaCount: 2  
+      # service.loadBalancerIP: '172.21.251.X' # MetalLB IP Address
+      # service.type: NodePort
+      service:
+        type: LoadBalancer
+        loadBalancerIP: '172.21.250.14' # MetalLB IP Address
+      env:
+        TZ: "Europe/Athens"

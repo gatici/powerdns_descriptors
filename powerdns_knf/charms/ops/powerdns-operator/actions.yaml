@@ -1,0 +1,64 @@
+# Copyright 2022
+# See LICENSE file for licensing details.
+#
+# If you don't need actions, you can remove the file entirely.
+# It ties in to the example _on_fortune_action handler in src/charm.py
+#
+# Learn more about actions at: https://juju.is/docs/sdk/actions
+
+add-zone:
+    description: "Creates a zone"
+    params:
+        zone_name:
+            description: "The DNS Zone to be created"
+            type: string
+            default: ""
+        service_name:
+            description: "The DNS Zone to be created"
+            type: string
+            default: ""
+delete-zone:
+    description: "Deletes a zone, all attached metadata and rrsets"
+    params:
+        zone_name:
+            description: "The DNS Zone to be deleted"
+            type: string
+            default: ""
+        service_name:
+            description: "The DNS Zone to be created"
+            type: string
+            default: ""
+add-domain:
+    description: "Add a subdomain to an existing zone"
+    params:
+        zone_name:
+            description: "The DNS Zone of the domain to be added"
+            type: string
+            default: ""
+        subdomain:
+            description: "The DNS subdomain to be created"
+            type: string
+            default: ""
+        ip:
+            description: "The IP of the subdomain"
+            type: string
+            default: ""
+        service_name:
+            description: "The DNS Zone to be created"
+            type: string
+            default: ""
+delete-domain:
+    description: "Delete a domain from a zone"
+    params:
+        zone_name:
+            description: "The DNS Zone of the domain to be deleted"
+            type: string
+            default: ""
+        subdomain:
+            description: "The DNS subdomain to be deleted"
+            type: string
+            default: ""
+        service_name:
+            description: "The DNS Zone to be created"
+            type: string
+            default: ""
