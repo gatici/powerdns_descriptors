@@ -14,8 +14,6 @@ from ops.model import ActiveStatus, BlockedStatus
 import requests
 
 
-logger = logging.getLogger(__name__)
-
 APIKEY = "pdnsapikey"
 
 
@@ -68,8 +66,8 @@ class PowerDns:
         }
         r = requests.post(url=self.url, data=json.dumps(payload), headers=self.headers)
         if r.status_code != 201:
-            err_code = f"{r.status_code}"
-            self.log.error(err_code, r.text)
+            err_code = str(r.status_code)
+            self.log.error(error_code + " " + r.text)
             raise ZoneException(f"Add zone operation failed with status code {err_code}, {r.text}")
         else:
             self.log.info("Added zone {zone}")
@@ -78,8 +76,8 @@ class PowerDns:
     def delete_zone(self, zone):
         r = requests.delete(url=self.url + "/" + zone, headers=self.headers)
         if r.status_code != 204:
-            err_code = f"{r.status_code}"
-            self.log.error(err_code, r.text)
+            err_code =  str(r.status_code)
+            self.log.error(err_code + " " + r.text)
             raise ZoneException(f"Delete zone operation failed with status code {err_code}, {r.text}")
         else:
             self.log.info(f"Deleted zone {zone}")
@@ -102,8 +100,8 @@ class PowerDns:
             url=self.url + "/" + zone, data=json.dumps(payload), headers=self.headers
         )
         if r.status_code != 204:
-            err_code = f"{r.status_code}"
-            self.log.error(err_code, r.text)
+            err_code = str(r.status_code)
+            self.log.error(err_code + " " + r.text)
             raise DomainException(f"Add domain operation failed with status code {err_code}, {r.text}")
         else:
             self.log.info(f"Added record of {domain}{zone} in {ip}")
@@ -118,8 +116,8 @@ class PowerDns:
             self.url + "/" + zone, data=json.dumps(payload), headers=self.headers
         )
         if r.status_code != 204:
-            err_code = f"{r.status_code}"
-            self.log.error(err_code, r.text)
+            err_code = str(r.status_code)
+            self.log.error(err_code + " " + r.text)
             raise DomainException(f"Delete domain operation failed with status code {err_code}, {r.text}")
         else:
             self.log.info(f"Deleted record of {domain} in zone {zone}")
@@ -155,21 +153,20 @@ class PowerDnsOperatorCharm(CharmBase):
         if not osm_config:
             self.unit.status = BlockedStatus("osm-config missing")
             return
-        logger.info(f"osm-config={osm_config}")
+        self.log.info(f"osm-config={osm_config}")
         self.unit.status = ActiveStatus()
 
-    def _get_dns_server_instance(self, service_name):
-        powerdns_service = self.osm_config.get_service(service_name)
-        powerdns_uri = f'http://{powerdns_service.ip}:8081/api/v1/servers/localhost/zones'
+    def _get_dns_server_instance(self):
+        powerdns_service = self.osm_config.get_service("webserver-osm-helm-powerdns")
+        powerdns_uri = f'http://{powerdns_service.ip}:{powerdns_service.get_port("dns-webserver")}/api/v1/servers/localhost/zones'
         return PowerDns(powerdns_uri)
 
     def _on_add_zone_action(self, event):
         """Handler for add-zone action."""
         try:
             self.log.info("Running add-zone action...")
-            service_name = event.params["service_name"]
             zone = event.params["zone_name"]
-            powerdns = self._get_dns_server_instance(service_name)
+            powerdns = self._get_dns_server_instance()
             result = powerdns.add_zone(zone)
             event.set_results({"output": result})
         except ZoneException as e:
@@ -179,9 +176,8 @@ class PowerDnsOperatorCharm(CharmBase):
         """Handler for delete-zone action."""
         try:
             self.log.info("Running delete-zone action...")
-            service_name = event.params["service_name"]
             zone = event.params["zone_name"]
-            powerdns = self._get_dns_server_instance(service_name)
+            powerdns = self._get_dns_server_instance()
             result = powerdns.delete_zone(zone)
             event.set_results({"output": result})
         except ZoneException as e:
@@ -191,11 +187,10 @@ class PowerDnsOperatorCharm(CharmBase):
         """Handler for add-domain action."""
         try:
             self.log.info("Running add-domain action...")
-            service_name = event.params["service_name"]
             zone = event.params["zone_name"]
             domain = event.params["subdomain"]
             ip = event.params["ip"]
-            powerdns = self._get_dns_server_instance(service_name)
+            powerdns = self._get_dns_server_instance()
             result = powerdns.add_domain(zone, domain, ip)
             event.set_results({"output": result})
         except ZoneException as e:
@@ -206,10 +201,9 @@ class PowerDnsOperatorCharm(CharmBase):
         """Handler for delete domain action."""
         try:
             self.log.info("Running delete-domain action...")
-            service_name = event.params["service_name"]
             zone = event.params["zone_name"]
             domain = event.params["subdomain"]
-            powerdns = self._get_dns_server_instance(service_name)
+            powerdns = self._get_dns_server_instance()
             result = powerdns.delete_domain(zone, domain)
             event.set_results({"output": result})
         except ZoneException as e:

@@ -18,16 +18,10 @@ vnfd:
               - name: zone_name
                 data-type: STRING
                 default-value: ""
-              - name: service_name
-                data-type: STRING
-                default-value: ""
             - name: delete-zone
               execution-environment-ref: powerdns-ee
               parameter:
                 - name: zone_name
-                  data-type: STRING
-                  default-value: ""
-                - name: service_name
                   data-type: STRING
                   default-value: ""
             - name: add-domain
@@ -42,9 +36,6 @@ vnfd:
                 - name: ip
                   data-type: STRING
                   default-value: ""
-                - name: service_name
-                  data-type: STRING
-                  default-value: ""
             - name: delete-domain
               execution-environment-ref: powerdns-ee
               parameter:
@@ -52,9 +43,6 @@ vnfd:
                   data-type: STRING
                   default-value: ""
                 - name: subdomain
-                  data-type: STRING
-                  default-value: ""
-                - name: service_name
                   data-type: STRING
                   default-value: ""
 
@@ -66,10 +54,10 @@ vnfd:
     nets:
     - id: mgmtnet
   kdu:
-  - name: powerdns_kdu
-    helm-chart: gatici-repo/powerdns
+  - name: powerdns
+    helm-chart: osm-helm/powerdns
     service:
-    - name: gatici-repo-powerdns
+    - name: webserver-osm-helm-powerdns
   mgmt-cp: mgmt-ext
   product-name: powerdns_knf
   provider: Canonical Ltd.

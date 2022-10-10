@@ -13,19 +13,11 @@ add-zone:
             description: "The DNS Zone to be created"
             type: string
             default: ""
-        service_name:
-            description: "The DNS Zone to be created"
-            type: string
-            default: ""
 delete-zone:
     description: "Deletes a zone, all attached metadata and rrsets"
     params:
         zone_name:
             description: "The DNS Zone to be deleted"
-            type: string
-            default: ""
-        service_name:
-            description: "The DNS Zone to be created"
             type: string
             default: ""
 add-domain:
@@ -43,10 +35,6 @@ add-domain:
             description: "The IP of the subdomain"
             type: string
             default: ""
-        service_name:
-            description: "The DNS Zone to be created"
-            type: string
-            default: ""
 delete-domain:
     description: "Delete a domain from a zone"
     params:
@@ -56,9 +44,5 @@ delete-domain:
             default: ""
         subdomain:
             description: "The DNS subdomain to be deleted"
-            type: string
-            default: ""
-        service_name:
-            description: "The DNS Zone to be created"
             type: string
             default: ""

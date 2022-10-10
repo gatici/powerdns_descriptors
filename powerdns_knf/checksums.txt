@@ -1,2 +1,2 @@
-fd62fe3cc727aae7ed477444c306e382	powerdns_knf/powerdns_vnfd.yaml
-faca81989cb3aaa7cfaad467be2a8380	powerdns_knf/charms/powerdns-proxy_ubuntu-20.04-amd64.charm
+7aade65cac896db9cbf08824f80bb79f	powerdns_knf/powerdns_vnfd.yaml
+904123d771f4d533f98ac6babf993d95	powerdns_knf/charms/powerdns-proxy_ubuntu-20.04-amd64.charm
