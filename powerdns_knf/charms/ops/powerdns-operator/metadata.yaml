@@ -3,7 +3,7 @@
 
 # For a complete list of supported options, see:
 # https://juju.is/docs/sdk/metadata-reference
-name: powerdns-proxy
+name: powerdns-operator
 display-name: Powerdns
 description: |
   Proxy charm to perform add/delete zone and domain on PowerDNS Server.

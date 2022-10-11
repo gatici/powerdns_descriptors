@@ -6,10 +6,54 @@ There is one VNF (powerdns_knf) with only one KDU.
 
 There is one NS that connects the VNF to a mgmt network
 
+## Download Packages
+
+```bash
+git clone https://github.com/gatici/powerdns_descriptors.git & cd powerdns_descriptors
+```
+
+## Create the VIM Account
+
+```bash
+# This is dummy vim account
+export VIM_ACCOUNT=k8s-vim
+osm vim-create --name $VIM_ACCOUNT \
+               --account_type dummy \
+               --user dummy \
+                --password dummy \
+                --auth_url "http://dummy" \
+                --tenant dummy
+```
+
+## Add K8s Cluster
+
+```bash
+# kubeconfig.yaml exists in the HOME directory
+k8s_net=<K8s cluster network>
+osm k8scluster-add --creds ~/kubeconfig.yaml \
+                     --vim k8s \
+                     --k8s-nets "{k8s_net: $k8s_net}" \
+                     --version 1.24  \
+                     k8s-cluster
+```
+
 ## Add Helm Repository
 
 ```bash
 osm repo-add --type helm-chart --description "Repository for Powerdns helm Chart" osm-helm https://gatici.github.io/helm-repo/
+```
+
+## Build the charm
+
+```bash
+# Install charmcraft
+sudo snap install charmcraft --classic
+pushd powerdns_knf/charms/ops/powerdns_operator
+# Pack charm
+charmcraft pack
+# Copy charm under VNFD/charms folder
+cp powerdns-operator_ubuntu-20.04-amd64.charm  ../../
+popd
 ```
 
 ## Onboarding and instantiation
@@ -19,17 +63,14 @@ VNF_NAME=powerdns
 KDU_NAME=powerdns
 # Define the NS name
 NS_NAME=<ns name>
-# Define the vim_account
-VIM_ACCOUNT=<vim_account_name|vim_account_id>
 ```
 
 ```bash
 osm nfpkg-create powerdns_knf
 osm nspkg-create powerdns_ns
-OP_ID=`osm ns-create --ns_name $NS_NAME --nsd_name powerdns_ns --vim_account $VIM_ACCOUNT --config "{vld: [ {name: mgmtnet, vim-network-name: osm-ext}]}"`
-# Check operation status
-osm ns-op-show $OP_ID
-osm ns-list
+osm ns-create --ns_name $NS_NAME --nsd_name powerdns_ns --vim_account $VIM_ACCOUNT --config "{vld: [ {name: mgmtnet, vim-network-name: osm-ext}]}"
+# Check NS status
+osm ns list
 ```
 
 ## Test Day2 Actions: add-zone, add-domain
@@ -80,7 +121,6 @@ OP_ID=`osm ns-action --action_name upgrade --vnf_name $VNF_NAME  --kdu_name $KDU
 osm ns-op-show $OP_ID --literal | yq .operationState
 osm vnf-show $VNF_ID --kdu $KDU_NAME | yq .config.replicaCount
 ```
-
 
 ## Rollback Operation: Scale In
 

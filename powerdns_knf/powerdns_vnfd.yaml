@@ -9,7 +9,7 @@ vnfd:
             execution-environment-list:
             - id: powerdns-ee
               juju:
-                charm: powerdns-proxy_ubuntu-20.04-amd64.charm
+                charm: powerdns-operator_ubuntu-20.04-amd64.charm
                 cloud: k8s
             config-primitive:
             - name: add-zone
