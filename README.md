@@ -9,7 +9,7 @@ There is one NS that connects the VNF to a mgmt network
 ## Download Packages
 
 ```bash
-git clone https://github.com/gatici/powerdns_descriptors.git & cd powerdns_descriptors
+git clone https://github.com/gatici/powerdns_descriptors.git && cd powerdns_descriptors
 ```
 
 ## Create the VIM Account
@@ -29,9 +29,9 @@ osm vim-create --name $VIM_ACCOUNT \
 
 ```bash
 # kubeconfig.yaml exists in the HOME directory
-k8s_net=<K8s cluster network>
+export k8s_net=<K8s cluster network>  # osm-ext
 osm k8scluster-add --creds ~/kubeconfig.yaml \
-                     --vim k8s \
+                     --vim k8s-vim \
                      --k8s-nets "{k8s_net: $k8s_net}" \
                      --version 1.24  \
                      k8s-cluster
@@ -48,7 +48,7 @@ osm repo-add --type helm-chart --description "Repository for Powerdns helm Chart
 ```bash
 # Install charmcraft
 sudo snap install charmcraft --classic
-pushd powerdns_knf/charms/ops/powerdns_operator
+pushd powerdns_knf/charms/ops/powerdns-operator
 # Pack charm
 charmcraft pack
 # Copy charm under VNFD/charms folder
@@ -59,16 +59,16 @@ popd
 ## Onboarding and instantiation
 
 ```bash
-VNF_NAME=powerdns
-KDU_NAME=powerdns
+export VNF_NAME=powerdns
+export KDU_NAME=powerdns
 # Define the NS name
-NS_NAME=<ns name>
+export NS_NAME=<ns name>
 ```
 
 ```bash
 osm nfpkg-create powerdns_knf
 osm nspkg-create powerdns_ns
-osm ns-create --ns_name $NS_NAME --nsd_name powerdns_ns --vim_account $VIM_ACCOUNT --config "{vld: [ {name: mgmtnet, vim-network-name: osm-ext}]}"
+osm ns-create --ns_name $NS_NAME --nsd_name powerdns_ns --vim_account $VIM_ACCOUNT --config "{vld: [ {name: mgmtnet, vim-network-name: $k8s_net}]}"
 # Check NS status
 osm ns list
 ```
@@ -96,10 +96,10 @@ osm ns-op-show $OP_ID
 
 ```bash
 VNF_ID=`osm vnf-list --ns $NS_NAME | grep powerdns | awk '{print $2}'`
-DNS_IP=`osm vnf-show $VNF_ID --literal | yq e '.kdur[0].services[] | select(.name == "osm-helm-powerdns*tcp") | .external_ip' | sed 's/- //g'`
+export DNS_IP=`osm vnf-show $VNF_ID --literal | yq -e '.kdur[0].services[] | select(.name | endswith("-tcp")) | .external_ip' | tr -d \"[]' '`
 RECORD=<domain><zone> 
 # Sample record: "test.example.org"
-dig @$DNS_IP +tcp $RECORD
+dig @${DNS_IP} +tcp $RECORD
 ```
 
 ## Test Day2 Actions: delete-domain, delete-zone
@@ -108,7 +108,7 @@ dig @$DNS_IP +tcp $RECORD
 # Delete Domain
 OP_ID=`osm ns-action --action_name delete-domain --vnf_name $VNF_NAME --kdu_name $KDU_NAME  --params "{'zone_name': $ZONE, 'subdomain': $DOMAIN}" $NS_NAME`
 osm ns-op-show $OP_ID
-dig @$DNS_IP +tcp $RECORD
+dig @${DNS_IP} +tcp ${RECORD}
 # Delete Zone
 OP_ID=`osm ns-action --action_name delete-zone --vnf_name $KDU_NAME --kdu_name $KDU_NAME  --params "{'zone_name': $ZONE}" $NS_NAME`
 osm ns-op-show $OP_ID
